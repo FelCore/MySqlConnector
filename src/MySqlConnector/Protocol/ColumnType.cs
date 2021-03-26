@@ -3,7 +3,7 @@ namespace MySqlConnector.Protocol
 	/// <summary>
 	/// See <a href="https://dev.mysql.com/doc/internals/en/com-query-response.html#column-type">MySQL documentation</a>.
 	/// </summary>
-	internal enum ColumnType
+	public enum ColumnType
 	{
 		Decimal = 0,
 		Tiny = 1,

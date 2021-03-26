@@ -3,7 +3,7 @@ namespace MySqlConnector.Protocol.Serialization
 	/// <summary>
 	/// Specifies whether to perform synchronous or asynchronous I/O.
 	/// </summary>
-	internal enum IOBehavior
+	public enum IOBehavior
 	{
 		/// <summary>
 		/// Use synchronous I/O.

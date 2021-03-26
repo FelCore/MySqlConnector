@@ -6,7 +6,7 @@ namespace MySqlConnector.Core
 	/// <summary>
 	/// <see cref="IMySqlCommand"/> provides an internal abstraction over <see cref="MySqlCommand"/> and <see cref="MySqlBatchCommand"/>.
 	/// </summary>
-	internal interface IMySqlCommand
+	public interface IMySqlCommand
 	{
 		string? CommandText { get; }
 		CommandType CommandType { get; }

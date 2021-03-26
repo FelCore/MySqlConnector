@@ -13,7 +13,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class CachedProcedure
+	public sealed class CachedProcedure
 	{
 		public static async Task<CachedProcedure?> FillAsync(IOBehavior ioBehavior, MySqlConnection connection, string schema, string component, CancellationToken cancellationToken)
 		{

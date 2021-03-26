@@ -8,7 +8,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal abstract class Row
+	public abstract class Row
 	{
 		public void SetData(ReadOnlyMemory<byte> data)
 		{

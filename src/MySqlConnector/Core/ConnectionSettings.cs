@@ -7,7 +7,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class ConnectionSettings
+	public sealed class ConnectionSettings
 	{
 		public ConnectionSettings(MySqlConnectionStringBuilder csb)
 		{

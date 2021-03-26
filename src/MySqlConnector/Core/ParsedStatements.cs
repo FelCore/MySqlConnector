@@ -8,7 +8,7 @@ namespace MySqlConnector.Core
 	/// <see cref="ParsedStatements"/> wraps a collection of <see cref="ParsedStatement"/> objects.
 	/// It implements <see cref="IDisposable"/> to return the memory backing the statements to a shared pool.
 	/// </summary>
-	internal sealed class ParsedStatements : IDisposable
+	public sealed class ParsedStatements : IDisposable
 	{
 		public IReadOnlyList<ParsedStatement> Statements => m_statements;
 

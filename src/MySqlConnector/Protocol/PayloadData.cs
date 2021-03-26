@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace MySqlConnector.Protocol
 {
-	internal readonly struct PayloadData : IDisposable
+	public readonly struct PayloadData : IDisposable
 	{
 		public PayloadData(byte[] data, bool isPooled = false)
 		{

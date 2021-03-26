@@ -1,6 +1,6 @@
 namespace MySqlConnector.Core
 {
-	internal enum ResultSetState
+	public enum ResultSetState
 	{
 		None,
 		ReadResultSetHeader,

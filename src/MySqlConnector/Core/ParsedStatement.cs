@@ -7,7 +7,7 @@ namespace MySqlConnector.Core
 	/// <see cref="ParsedStatement"/> represents an individual SQL statement that's been parsed
 	/// from a string possibly containing multiple semicolon-delimited SQL statements.
 	/// </summary>
-	internal sealed class ParsedStatement
+	public sealed class ParsedStatement
 	{
 		/// <summary>
 		/// The bytes for this statement that will be written on the wire.

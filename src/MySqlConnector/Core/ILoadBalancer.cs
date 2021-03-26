@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MySqlConnector.Core
 {
-	internal interface ILoadBalancer
+	public interface ILoadBalancer
 	{
 		/// <summary>
 		/// Returns an <see cref="IEnumerable{String}"/> containing <paramref name="hosts"/> in the order they

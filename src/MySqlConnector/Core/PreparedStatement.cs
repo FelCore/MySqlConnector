@@ -5,7 +5,7 @@ namespace MySqlConnector.Core
 	/// <summary>
 	/// <see cref="PreparedStatement"/> is a statement that has been prepared on the MySQL Server.
 	/// </summary>
-	internal sealed class PreparedStatement
+	public sealed class PreparedStatement
 	{
 		public PreparedStatement(int statementId, ParsedStatement statement, ColumnDefinitionPayload[]? columns, ColumnDefinitionPayload[]? parameters)
 		{

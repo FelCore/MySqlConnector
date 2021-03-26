@@ -5,7 +5,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class ServerVersion
+	public sealed class ServerVersion
 	{
 		public ServerVersion(ReadOnlySpan<byte> versionString)
 		{

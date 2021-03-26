@@ -640,7 +640,7 @@ namespace MySqlConnector
 				throw new InvalidOperationException("Can't call this method when MySqlDataReader is closed.");
 		}
 
-		private ResultSet GetResultSet()
+		internal ResultSet GetResultSet()
 		{
 			VerifyNotDisposed();
 			if (m_resultSet is null || m_resultSet.ContainsCommandParameters)

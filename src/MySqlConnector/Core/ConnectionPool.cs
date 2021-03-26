@@ -11,7 +11,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class ConnectionPool
+	public sealed class ConnectionPool
 	{
 		public int Id { get; }
 

@@ -5,7 +5,7 @@ namespace MySqlConnector.Utilities
 	/// <summary>
 	/// A wrapper around a resizable array. This type is intended to be used with <see cref="ResizableArraySegment{T}"/>.
 	/// </summary>
-	internal sealed class ResizableArray<T>
+	public sealed class ResizableArray<T>
 		where T : notnull
 	{
 		public T[]? Array => m_array;

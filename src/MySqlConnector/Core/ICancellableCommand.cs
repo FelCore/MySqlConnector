@@ -7,7 +7,7 @@ namespace MySqlConnector.Core
 	/// <summary>
 	/// <see cref="IMySqlCommand"/> provides an internal abstraction over operations that can be cancelled: <see cref="MySqlCommand"/> and <see cref="MySqlBatch"/>.
 	/// </summary>
-	internal interface ICancellableCommand
+	public interface ICancellableCommand
 	{
 		int CommandId { get; }
 		int CommandTimeout { get; }

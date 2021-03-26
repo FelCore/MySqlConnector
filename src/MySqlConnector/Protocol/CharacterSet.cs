@@ -4,7 +4,7 @@ namespace MySqlConnector.Protocol
 	/// MySQL character set codes.
 	/// </summary>
 	/// <remarks>Obtained from <c>SELECT id, collation_name FROM information_schema.collations ORDER BY id;</c> on MySQL 8.0.16.</remarks>
-	internal enum CharacterSet : ushort
+	public enum CharacterSet : ushort
 	{
 		None = 0,
 		Big5ChineseCaseInsensitive = 1,

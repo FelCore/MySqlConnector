@@ -28,7 +28,7 @@ using MySqlConnector.Utilities;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class ServerSession
+	public sealed class ServerSession
 	{
 		public ServerSession()
 			: this(null, 0, Interlocked.Increment(ref s_lastId))

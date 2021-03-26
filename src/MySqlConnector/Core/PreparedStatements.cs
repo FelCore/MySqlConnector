@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MySqlConnector.Core
 {
-	internal sealed class PreparedStatements : IDisposable
+	public sealed class PreparedStatements : IDisposable
 	{
 		public IReadOnlyList<PreparedStatement> Statements { get; }
 
