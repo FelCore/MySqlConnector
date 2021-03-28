@@ -27,14 +27,14 @@ namespace MySqlConnector.Core
 
 		public object GetValue(int ordinal)
 		{
-			if (ordinal < 0 || ordinal > ResultSet.ColumnDefinitions!.Length)
-				throw new ArgumentOutOfRangeException(nameof(ordinal), "value must be between 0 and {0}.".FormatInvariant(ResultSet.ColumnDefinitions!.Length));
+			if (ordinal < 0 || ordinal > _columnDefinitions.Length)
+				throw new ArgumentOutOfRangeException(nameof(ordinal), "value must be between 0 and {0}.".FormatInvariant(_columnDefinitions.Length));
 
 			if (m_dataOffsets[ordinal] == -1)
 				return DBNull.Value;
 
 			var data = m_data.Slice(m_dataOffsets[ordinal], m_dataLengths[ordinal]).Span;
-			var columnDefinition = ResultSet.ColumnDefinitions[ordinal];
+			var columnDefinition = _columnDefinitions[ordinal];
 			return GetValueCore(data, columnDefinition);
 		}
 
@@ -204,13 +204,13 @@ namespace MySqlConnector.Core
 
 		public int GetInt32(int ordinal)
 		{
-			if (ordinal < 0 || ordinal > ResultSet.ColumnDefinitions!.Length)
-				throw new ArgumentOutOfRangeException(nameof(ordinal), "value must be between 0 and {0}.".FormatInvariant(ResultSet.ColumnDefinitions!.Length));
+			if (ordinal < 0 || ordinal > _columnDefinitions.Length)
+				throw new ArgumentOutOfRangeException(nameof(ordinal), "value must be between 0 and {0}.".FormatInvariant(_columnDefinitions.Length));
 
 			if (m_dataOffsets[ordinal] == -1)
 				throw new InvalidCastException();
 
-			var columnDefinition = ResultSet.ColumnDefinitions[ordinal];
+			var columnDefinition = _columnDefinitions[ordinal];
 			if (columnDefinition.ColumnType is ColumnType.Decimal or ColumnType.NewDecimal)
 			{
 				return (int) (decimal) GetValue(ordinal);
@@ -427,14 +427,14 @@ namespace MySqlConnector.Core
 		public MySqlGeometry GetMySqlGeometry(int ordinal)
 		{
 			var value = GetValue(ordinal);
-			if (value is byte[] bytes && ResultSet.ColumnDefinitions![ordinal].ColumnType == ColumnType.Geometry)
+			if (value is byte[] bytes && _columnDefinitions[ordinal].ColumnType == ColumnType.Geometry)
 				return new MySqlGeometry(bytes);
-			throw new InvalidCastException("Can't convert {0} to MySqlGeometry.".FormatInvariant(ResultSet.ColumnDefinitions![ordinal].ColumnType));
+			throw new InvalidCastException("Can't convert {0} to MySqlGeometry.".FormatInvariant(_columnDefinitions[ordinal].ColumnType));
 		}
 
 		public int GetValues(object[] values)
 		{
-			int count = Math.Min((values ?? throw new ArgumentNullException(nameof(values))).Length, ResultSet.ColumnDefinitions!.Length);
+			int count = Math.Min((values ?? throw new ArgumentNullException(nameof(values))).Length, _columnDefinitions.Length);
 			for (int i = 0; i < count; i++)
 				values[i] = GetValue(i);
 			return count;
@@ -449,6 +449,7 @@ namespace MySqlConnector.Core
 		protected Row(ResultSet resultSet)
 		{
 			ResultSet = resultSet;
+			_columnDefinitions = ResultSet.ColumnDefinitions!;
 			m_dataOffsets = new int[ResultSet.ColumnDefinitions!.Length];
 			m_dataLengths = new int[ResultSet.ColumnDefinitions.Length];
 		}
@@ -507,7 +508,7 @@ namespace MySqlConnector.Core
 			if (m_dataOffsets[ordinal] == -1)
 				throw new InvalidCastException("Column is NULL.");
 
-			var column = ResultSet.ColumnDefinitions![ordinal];
+			var column = _columnDefinitions[ordinal];
 			var columnType = column.ColumnType;
 			if ((column.ColumnFlags & ColumnFlags.Binary) == 0 ||
 				(columnType != ColumnType.String && columnType != ColumnType.VarString && columnType != ColumnType.TinyBlob &&
@@ -535,6 +536,7 @@ namespace MySqlConnector.Core
 		}
 
 		ReadOnlyMemory<byte> m_data;
+		protected ColumnDefinitionPayload[] _columnDefinitions;
 		readonly int[] m_dataOffsets;
 		readonly int[] m_dataLengths;
 	}

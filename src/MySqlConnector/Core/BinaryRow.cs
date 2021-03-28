@@ -42,7 +42,7 @@ namespace MySqlConnector.Core
 				}
 				else
 				{
-					var columnDefinition = ResultSet.ColumnDefinitions![column];
+					var columnDefinition = _columnDefinitions[column];
 					var length = columnDefinition.ColumnType switch
 					{
 						ColumnType.Longlong or ColumnType.Double => 8,
