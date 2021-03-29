@@ -22,7 +22,7 @@ namespace MySqlConnector.Protocol.Serialization
 
 		public ValueTask<int> ReadBytesAsync(Memory<byte> buffer, IOBehavior ioBehavior)
 		{
-			return ioBehavior == IOBehavior.Asynchronous ? new ValueTask<int>(DoReadBytesAsync(buffer)) :
+			return ioBehavior == IOBehavior.Asynchronous ? DoReadBytesAsync(buffer) :
 				RemainingTimeout <= 0 ? ValueTaskExtensions.FromException<int>(MySqlException.CreateForTimeout()) :
 				m_stream.CanTimeout ? DoReadBytesSync(buffer) :
 				DoReadBytesSyncOverAsync(buffer);
@@ -60,7 +60,7 @@ namespace MySqlConnector.Protocol.Serialization
 				}
 			}
 
-			async Task<int> DoReadBytesAsync(Memory<byte> buffer)
+			async ValueTask<int> DoReadBytesAsync(Memory<byte> buffer)
 			{
 				var startTime = RemainingTimeout == Constants.InfiniteTimeout ? 0 : Environment.TickCount;
 				var timerId = RemainingTimeout == Constants.InfiniteTimeout ? 0 : TimerQueue.Instance.Add(RemainingTimeout, m_closeStream);
@@ -92,7 +92,7 @@ namespace MySqlConnector.Protocol.Serialization
 		public ValueTask<int> WriteBytesAsync(ReadOnlyMemory<byte> data, IOBehavior ioBehavior)
 		{
 			if (ioBehavior == IOBehavior.Asynchronous)
-				return new ValueTask<int>(DoWriteBytesAsync(data));
+				return DoWriteBytesAsync(data);
 
 			try
 			{
@@ -104,7 +104,7 @@ namespace MySqlConnector.Protocol.Serialization
 				return ValueTaskExtensions.FromException<int>(ex);
 			}
 
-			async Task<int> DoWriteBytesAsync(ReadOnlyMemory<byte> data)
+			async ValueTask<int> DoWriteBytesAsync(ReadOnlyMemory<byte> data)
 			{
 				await m_stream.WriteAsync(data).ConfigureAwait(false);
 				return 0;

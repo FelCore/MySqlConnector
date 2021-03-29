@@ -213,7 +213,7 @@ namespace MySqlConnector.Protocol.Serialization
 			var reader = new ByteArrayReader(switchRequest.AsSpan());
 			return Encoding.UTF8.GetString(reader.ReadNullOrEofTerminatedByteString());
 		}
-		public static async Task<PayloadData> AuthenticateAsync(ConnectionSettings cs, byte[] switchRequestPayloadData,
+		public static async ValueTask<PayloadData> AuthenticateAsync(ConnectionSettings cs, byte[] switchRequestPayloadData,
 			ServerSession session, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			using var innerStream = new NegotiateToMySqlConverterStream(session, ioBehavior, cancellationToken);

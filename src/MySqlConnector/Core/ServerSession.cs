@@ -372,7 +372,7 @@ namespace MySqlConnector.Core
 				m_state = State.Closed;
 		}
 
-		public async Task<string?> ConnectAsync(ConnectionSettings cs, int startTickCount, ILoadBalancer? loadBalancer, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		public async ValueTask<string?> ConnectAsync(ConnectionSettings cs, int startTickCount, ILoadBalancer? loadBalancer, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			string? statusInfo = null;
 
@@ -596,7 +596,7 @@ namespace MySqlConnector.Core
 			return false;
 		}
 
-		private async Task<PayloadData> SwitchAuthenticationAsync(ConnectionSettings cs, PayloadData payload, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private async ValueTask<PayloadData> SwitchAuthenticationAsync(ConnectionSettings cs, PayloadData payload, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			// if the server didn't support the hashed password; rehash with the new challenge
 			var switchRequest = AuthenticationMethodSwitchRequestPayload.Create(payload.Span);
@@ -676,7 +676,7 @@ namespace MySqlConnector.Core
 			}
 		}
 
-		private async Task<PayloadData> SendClearPasswordAsync(ConnectionSettings cs, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private async ValueTask<PayloadData> SendClearPasswordAsync(ConnectionSettings cs, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			// add NUL terminator to password
 			var passwordBytes = Encoding.UTF8.GetBytes(cs.Password);
@@ -689,7 +689,7 @@ namespace MySqlConnector.Core
 		}
 
 #if !NET45
-		private async Task<PayloadData> SendEncryptedPasswordAsync(
+		private async ValueTask<PayloadData> SendEncryptedPasswordAsync(
 			AuthenticationMethodSwitchRequestPayload switchRequest,
 			string rsaPublicKey,
 			ConnectionSettings cs,
@@ -742,7 +742,7 @@ namespace MySqlConnector.Core
 #endif
 
 #if !NET45
-		private async Task<string> GetRsaPublicKeyAsync(string switchRequestName, ConnectionSettings cs, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private async ValueTask<string> GetRsaPublicKeyAsync(string switchRequestName, ConnectionSettings cs, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			if (cs.ServerRsaPublicKeyFile.Length != 0)
 			{

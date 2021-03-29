@@ -157,14 +157,14 @@ namespace MySqlConnector
 		/// Asynchronously loads all data in the source file or stream into the destination table.
 		/// </summary>
 		/// <returns>A <see cref="Task{Int32}"/> that will be completed with the number of rows inserted.</returns>
-		public Task<int> LoadAsync() => LoadAsync(IOBehavior.Asynchronous, CancellationToken.None).AsTask();
+		public ValueTask<int> LoadAsync() => LoadAsync(IOBehavior.Asynchronous, CancellationToken.None);
 
 		/// <summary>
 		/// Asynchronously loads all data in the source file or stream into the destination table.
 		/// </summary>
 		/// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
 		/// <returns>A <see cref="Task{Int32}"/> that will be completed with the number of rows inserted.</returns>
-		public Task<int> LoadAsync(CancellationToken cancellationToken) => LoadAsync(IOBehavior.Asynchronous, cancellationToken).AsTask();
+		public ValueTask<int> LoadAsync(CancellationToken cancellationToken) => LoadAsync(IOBehavior.Asynchronous, cancellationToken);
 
 		internal async ValueTask<int> LoadAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{

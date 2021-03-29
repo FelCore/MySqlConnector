@@ -98,7 +98,7 @@ namespace MySqlConnector
 		/// </summary>
 		/// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
 		/// <returns>A <see cref="Task{MySqlDataReader}"/> containing the result of the asynchronous operation.</returns>
-		public Task<MySqlDataReader> ExecuteReaderAsync(CancellationToken cancellationToken = default) => ExecuteDbDataReaderAsync(cancellationToken);
+		public ValueTask<MySqlDataReader> ExecuteReaderAsync(CancellationToken cancellationToken = default) => ExecuteDbDataReaderAsync(cancellationToken);
 
 		private MySqlDataReader ExecuteDbDataReader()
 		{
@@ -106,17 +106,17 @@ namespace MySqlConnector
 			return ExecuteReaderAsync(IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
 		}
 
-		private async Task<MySqlDataReader> ExecuteDbDataReaderAsync(CancellationToken cancellationToken)
+		private async ValueTask<MySqlDataReader> ExecuteDbDataReaderAsync(CancellationToken cancellationToken)
 		{
 			((ICancellableCommand) this).ResetCommandTimeout();
 			using var registration = ((ICancellableCommand) this).RegisterCancel(cancellationToken);
 			return await ExecuteReaderAsync(AsyncIOBehavior, cancellationToken).ConfigureAwait(false);
 		}
 
-		private Task<MySqlDataReader> ExecuteReaderAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private ValueTask<MySqlDataReader> ExecuteReaderAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			if (!IsValid(out var exception))
-			 	return Utility.TaskFromException<MySqlDataReader>(exception);
+				return ValueTaskExtensions.FromException<MySqlDataReader>(exception);
 
 			foreach (var batchCommand in BatchCommands)
 				batchCommand.Batch = this;
@@ -131,9 +131,9 @@ namespace MySqlConnector
 
 		public object ExecuteScalar() => ExecuteScalarAsync(IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
 
-		public Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken = default) => ExecuteNonQueryAsync(AsyncIOBehavior, cancellationToken);
+		public ValueTask<int> ExecuteNonQueryAsync(CancellationToken cancellationToken = default) => ExecuteNonQueryAsync(AsyncIOBehavior, cancellationToken);
 
-		public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken = default) => ExecuteScalarAsync(AsyncIOBehavior, cancellationToken);
+		public ValueTask<object> ExecuteScalarAsync(CancellationToken cancellationToken = default) => ExecuteScalarAsync(AsyncIOBehavior, cancellationToken);
 
 		public int Timeout { get; set; }
 
@@ -193,7 +193,7 @@ namespace MySqlConnector
 			Cancel();
 		}
 
-		private async Task<int> ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private async ValueTask<int> ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			((ICancellableCommand) this).ResetCommandTimeout();
 			using var registration = ((ICancellableCommand) this).RegisterCancel(cancellationToken);
@@ -207,7 +207,7 @@ namespace MySqlConnector
 			return reader.RecordsAffected;
 		}
 
-		private async Task<object> ExecuteScalarAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		private async ValueTask<object> ExecuteScalarAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			((ICancellableCommand) this).ResetCommandTimeout();
 			using var registration = ((ICancellableCommand) this).RegisterCancel(cancellationToken);

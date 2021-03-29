@@ -156,10 +156,10 @@ namespace MySqlConnector
 			if (resultSet.BufferState != ResultSetState.HasMoreData)
 				throw new InvalidOperationException("Invalid state: {0}".FormatInvariant(resultSet.BufferState));
 
-			return new ValueTask<int>(ScanResultSetAsyncAwaited(ioBehavior, resultSet, cancellationToken));
+			return ScanResultSetAsyncAwaited(ioBehavior, resultSet, cancellationToken);
 		}
 
-		private async Task<int> ScanResultSetAsyncAwaited(IOBehavior ioBehavior, ResultSet resultSet, CancellationToken cancellationToken)
+		private async ValueTask<int> ScanResultSetAsyncAwaited(IOBehavior ioBehavior, ResultSet resultSet, CancellationToken cancellationToken)
 		{
 			using (Command!.CancellableCommand.RegisterCancel(cancellationToken))
 			{
@@ -433,7 +433,7 @@ namespace MySqlConnector
 		internal MySqlConnection? Connection => Command?.Connection;
 		internal ServerSession? Session => Command?.Connection!.Session;
 
-		internal static async Task<MySqlDataReader> CreateAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary<string, CachedProcedure?>? cachedProcedures, IMySqlCommand command, CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal static async ValueTask<MySqlDataReader> CreateAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary<string, CachedProcedure?>? cachedProcedures, IMySqlCommand command, CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			var dataReader = new MySqlDataReader(commandListPosition, payloadCreator, cachedProcedures, command, behavior);
 			command.Connection!.SetActiveReader(dataReader);

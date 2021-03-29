@@ -215,7 +215,7 @@ namespace MySqlConnector.Core
 			return true;
 		}
 
-		public async Task<Row?> BufferReadAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		public async ValueTask<Row?> BufferReadAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			var row = await ScanRowAsync(ioBehavior, null, cancellationToken).ConfigureAwait(false);
 			if (row is null)
@@ -235,9 +235,9 @@ namespace MySqlConnector.Core
 			var payloadValueTask = Session.ReceiveReplyAsync(ioBehavior, CancellationToken.None);
 			return payloadValueTask.IsCompletedSuccessfully
 				? new ValueTask<Row?>(ScanRowAsyncRemainder(this, payloadValueTask.Result, row))
-				: new ValueTask<Row?>(ScanRowAsyncAwaited(this, payloadValueTask.AsTask(), row, cancellationToken));
+				: ScanRowAsyncAwaited(this, payloadValueTask, row, cancellationToken);
 
-			static async Task<Row?> ScanRowAsyncAwaited(ResultSet resultSet, Task<PayloadData> payloadTask, Row? row, CancellationToken token)
+			static async ValueTask<Row?> ScanRowAsyncAwaited(ResultSet resultSet, ValueTask<PayloadData> payloadTask, Row? row, CancellationToken token)
 			{
 				PayloadData payloadData;
 				try

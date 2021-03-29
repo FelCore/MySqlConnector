@@ -256,9 +256,9 @@ namespace MySqlConnector
 			ExecuteReaderAsync(behavior, IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
 
 		public override Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken) =>
-			ExecuteNonQueryAsync(AsyncIOBehavior, cancellationToken);
+			ExecuteNonQueryAsync(AsyncIOBehavior, cancellationToken).AsTask();
 
-		internal async Task<int> ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal async ValueTask<int> ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			Volatile.Write(ref m_commandTimedOut, false);
 			this.ResetCommandTimeout();
@@ -274,9 +274,9 @@ namespace MySqlConnector
 		}
 
 		public override Task<object?> ExecuteScalarAsync(CancellationToken cancellationToken) =>
-			ExecuteScalarAsync(AsyncIOBehavior, cancellationToken);
+			ExecuteScalarAsync(AsyncIOBehavior, cancellationToken).AsTask();
 
-		internal async Task<object?> ExecuteScalarAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal async ValueTask<object?> ExecuteScalarAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			Volatile.Write(ref m_commandTimedOut, false);
 			this.ResetCommandTimeout();
@@ -297,16 +297,16 @@ namespace MySqlConnector
 			return result;
 		}
 
-		public new Task<MySqlDataReader> ExecuteReaderAsync(CancellationToken cancellationToken = default) =>
+		public new ValueTask<MySqlDataReader> ExecuteReaderAsync(CancellationToken cancellationToken = default) =>
 			ExecuteReaderAsync(default, AsyncIOBehavior, cancellationToken);
 
-		public new Task<MySqlDataReader> ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken = default) =>
+		public new ValueTask<MySqlDataReader> ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken = default) =>
 			ExecuteReaderAsync(behavior, AsyncIOBehavior, cancellationToken);
 
 		protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken) =>
 			await ExecuteReaderAsync(behavior, AsyncIOBehavior, cancellationToken).ConfigureAwait(false);
 
-		internal async Task<MySqlDataReader> ExecuteReaderAsync(CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal async ValueTask<MySqlDataReader> ExecuteReaderAsync(CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			Volatile.Write(ref m_commandTimedOut, false);
 			this.ResetCommandTimeout();
@@ -314,10 +314,10 @@ namespace MySqlConnector
 			return await ExecuteReaderNoResetTimeoutAsync(behavior, ioBehavior, cancellationToken).ConfigureAwait(false);
 		}
 
-		internal Task<MySqlDataReader> ExecuteReaderNoResetTimeoutAsync(CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal ValueTask<MySqlDataReader> ExecuteReaderNoResetTimeoutAsync(CommandBehavior behavior, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			if (!IsValid(out var exception))
-				return Utility.TaskFromException<MySqlDataReader>(exception);
+				return ValueTaskExtensions.FromException<MySqlDataReader>(exception);
 
 			m_commandBehavior = behavior;
 			return CommandExecutor.ExecuteReaderAsync(new IMySqlCommand[] { this }, SingleCommandPayloadCreator.Instance, behavior, ioBehavior, cancellationToken);

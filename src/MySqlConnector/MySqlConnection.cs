@@ -358,7 +358,7 @@ namespace MySqlConnector
 #pragma warning disable CA2012 // Safe because method completes synchronously
 		public bool Ping() => PingAsync(IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
 #pragma warning restore CA2012
-		public Task<bool> PingAsync(CancellationToken cancellationToken = default) => PingAsync(SimpleAsyncIOBehavior, cancellationToken).AsTask();
+		public ValueTask<bool> PingAsync(CancellationToken cancellationToken = default) => PingAsync(SimpleAsyncIOBehavior, cancellationToken);
 
 		private async ValueTask<bool> PingAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
@@ -728,7 +728,7 @@ namespace MySqlConnector
 			}
 		}
 
-		internal async Task<CachedProcedure?> GetCachedProcedure(string name, bool revalidateMissing, IOBehavior ioBehavior, CancellationToken cancellationToken)
+		internal async ValueTask<CachedProcedure?> GetCachedProcedure(string name, bool revalidateMissing, IOBehavior ioBehavior, CancellationToken cancellationToken)
 		{
 			if (Log.IsDebugEnabled())
 				Log.Debug("Session{0} getting cached procedure Name={1}", m_session!.Id, name);
