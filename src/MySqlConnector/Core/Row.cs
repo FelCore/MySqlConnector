@@ -40,6 +40,9 @@ namespace MySqlConnector.Core
 
 		public bool GetBoolean(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return false;
+
 			var value = GetValue(ordinal);
 			if (value is bool)
 				return (bool) value;
@@ -67,6 +70,9 @@ namespace MySqlConnector.Core
 
 		public sbyte GetSByte(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is sbyte sbyteValue)
 				return sbyteValue;
@@ -94,6 +100,9 @@ namespace MySqlConnector.Core
 
 		public byte GetByte(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is byte byteValue)
 				return byteValue;
@@ -177,6 +186,9 @@ namespace MySqlConnector.Core
 
 		public short GetInt16(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is short)
 				return (short) value;
@@ -204,6 +216,9 @@ namespace MySqlConnector.Core
 
 		public int GetInt32(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			if (ordinal < 0 || ordinal > _columnDefinitions.Length)
 				throw new ArgumentOutOfRangeException(nameof(ordinal), "value must be between 0 and {0}.".FormatInvariant(_columnDefinitions.Length));
 
@@ -244,6 +259,9 @@ namespace MySqlConnector.Core
 
 		public long GetInt64(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is long)
 				return (long) value;
@@ -271,6 +289,9 @@ namespace MySqlConnector.Core
 
 		public ushort GetUInt16(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is ushort)
 				return (ushort) value;
@@ -298,6 +319,9 @@ namespace MySqlConnector.Core
 
 		public uint GetUInt32(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is uint)
 				return (uint) value;
@@ -325,6 +349,9 @@ namespace MySqlConnector.Core
 
 		public ulong GetUInt64(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is ulong)
 				return (ulong) value;
@@ -368,10 +395,13 @@ namespace MySqlConnector.Core
 				throw new InvalidOperationException("Can't get underlying array.");
 		}
 
-		public string GetString(int ordinal) => (string) GetValue(ordinal);
+		public string GetString(int ordinal) => IsDBNull(ordinal) ? string.Empty : (string) GetValue(ordinal);
 
 		public decimal GetDecimal(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is decimal) // happy flow
 				return (decimal) value;
@@ -387,6 +417,9 @@ namespace MySqlConnector.Core
 
 		public double GetDouble(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is double) // happy flow
 				return (double) value;
@@ -402,6 +435,9 @@ namespace MySqlConnector.Core
 
 		public float GetFloat(int ordinal)
 		{
+			if (IsDBNull(ordinal))
+				return 0;
+
 			var value = GetValue(ordinal);
 			if (value is float) // happy flow
 				return (float) value;
