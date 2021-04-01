@@ -39,7 +39,7 @@ namespace MySqlConnector.Core
 			{
 			case ColumnType.Tiny:
 				var value = ParseInt32(data);
-				if (Connection.TreatTinyAsBoolean && columnDefinition.ColumnLength == 1 && !isUnsigned)
+				if (TreatTinyAsBoolean && columnDefinition.ColumnLength == 1 && !isUnsigned)
 					return value != 0;
 				return isUnsigned ? (object) (byte) value : (sbyte) value;
 
@@ -54,9 +54,9 @@ namespace MySqlConnector.Core
 				return ReadBit(data, columnDefinition);
 
 			case ColumnType.String:
-				if (Connection.GuidFormat == MySqlGuidFormat.Char36 && columnDefinition.ColumnLength / ProtocolUtility.GetBytesPerCharacter(columnDefinition.CharacterSet) == 36)
+				if (GuidFormat == MySqlGuidFormat.Char36 && columnDefinition.ColumnLength / ProtocolUtility.GetBytesPerCharacter(columnDefinition.CharacterSet) == 36)
 					return Utf8Parser.TryParse(data, out Guid guid, out int guid36BytesConsumed, 'D') && guid36BytesConsumed == 36 ? guid : throw new FormatException();
-				if (Connection.GuidFormat == MySqlGuidFormat.Char32 && columnDefinition.ColumnLength / ProtocolUtility.GetBytesPerCharacter(columnDefinition.CharacterSet) == 32)
+				if (GuidFormat == MySqlGuidFormat.Char32 && columnDefinition.ColumnLength / ProtocolUtility.GetBytesPerCharacter(columnDefinition.CharacterSet) == 32)
 					return Utf8Parser.TryParse(data, out Guid guid, out int guid32BytesConsumed, 'N') && guid32BytesConsumed == 32 ? guid : throw new FormatException();
 				goto case ColumnType.VarString;
 
@@ -70,7 +70,7 @@ namespace MySqlConnector.Core
 			case ColumnType.Set:
 				if (columnDefinition.CharacterSet == CharacterSet.Binary)
 				{
-					var guidFormat = Connection.GuidFormat;
+					var guidFormat = GuidFormat;
 					if ((guidFormat is MySqlGuidFormat.Binary16 or MySqlGuidFormat.TimeSwapBinary16 or MySqlGuidFormat.LittleEndianBinary16) && columnDefinition.ColumnLength == 16)
 						return CreateGuidFromBytes(guidFormat, data);
 
@@ -144,9 +144,9 @@ namespace MySqlConnector.Core
 
 			if (year == 0 && month == 0 && day == 0)
 			{
-				if (Connection.ConvertZeroDateTime)
+				if (ConvertZeroDateTime)
 					return DateTime.MinValue;
-				if (Connection.AllowZeroDateTime)
+				if (AllowZeroDateTime)
 					return new MySqlDateTime();
 				throw new InvalidCastException("Unable to convert MySQL date/time to System.DateTime, set AllowZeroDateTime=True or ConvertZeroDateTime=True in the connection string. See https://mysqlconnector.net/connection-options/");
 			}
@@ -192,8 +192,8 @@ namespace MySqlConnector.Core
 
 			try
 			{
-				return Connection.AllowZeroDateTime ? (object) new MySqlDateTime(year, month, day, hour, minute, second, microseconds) :
-					new DateTime(year, month, day, hour, minute, second, microseconds / 1000, Connection.DateTimeKind).AddTicks(microseconds % 1000 * 10);
+				return AllowZeroDateTime ? (object) new MySqlDateTime(year, month, day, hour, minute, second, microseconds) :
+					new DateTime(year, month, day, hour, minute, second, microseconds / 1000, DateTimeKind).AddTicks(microseconds % 1000 * 10);
 			}
 			catch (Exception ex)
 			{

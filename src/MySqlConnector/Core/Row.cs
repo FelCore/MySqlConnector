@@ -170,7 +170,7 @@ namespace MySqlConnector.Core
 				return guid;
 
 			if (value is byte[] bytes && bytes.Length == 16)
-				return CreateGuidFromBytes(Connection.GuidFormat, bytes);
+				return CreateGuidFromBytes(GuidFormat, bytes);
 
 			throw new InvalidCastException("The value could not be converted to a GUID: {0}".FormatInvariant(value));
 		}
@@ -229,7 +229,7 @@ namespace MySqlConnector.Core
 
 			var result = GetInt32Core(data, columnDefinition);
 			if (columnDefinition.ColumnType == ColumnType.Tiny &&
-				Connection.TreatTinyAsBoolean &&
+				TreatTinyAsBoolean &&
 				columnDefinition.ColumnLength == 1 &&
 				(columnDefinition.ColumnFlags & ColumnFlags.Unsigned) == 0 &&
 				result != 0)
@@ -452,6 +452,15 @@ namespace MySqlConnector.Core
 			_columnDefinitions = ResultSet.ColumnDefinitions!;
 			m_dataOffsets = new int[ResultSet.ColumnDefinitions!.Length];
 			m_dataLengths = new int[ResultSet.ColumnDefinitions.Length];
+
+			if (ResultSet.Connection != null)
+			{
+				GuidFormat = ResultSet.Connection.GuidFormat;
+				TreatTinyAsBoolean = ResultSet.Connection.TreatTinyAsBoolean;
+				ConvertZeroDateTime = ResultSet.Connection.ConvertZeroDateTime;
+				AllowZeroDateTime = ResultSet.Connection.AllowZeroDateTime;
+				DateTimeKind = ResultSet.Connection.DateTimeKind;
+			}
 		}
 
 		protected abstract Row CloneCore();
@@ -461,7 +470,12 @@ namespace MySqlConnector.Core
 		protected abstract void GetDataOffsets(ReadOnlySpan<byte> data, int[] dataOffsets, int[] dataLengths);
 
 		protected ResultSet ResultSet { get; }
-		protected MySqlConnection Connection => ResultSet.Connection;
+
+		protected MySqlGuidFormat GuidFormat;
+		protected bool TreatTinyAsBoolean;
+		protected bool ConvertZeroDateTime;
+		protected bool AllowZeroDateTime;
+		protected DateTimeKind DateTimeKind;
 
 		protected unsafe static Guid CreateGuidFromBytes(MySqlGuidFormat guidFormat, ReadOnlySpan<byte> bytes) =>
 			guidFormat switch
